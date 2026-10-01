@@ -300,7 +300,159 @@ function adicionarUsuario(texto){
     linha.appendChild(balao);
 
     chat.appendChild(linha);
+    chat.scrollTop =
+        chat.scrollHeight;
+}
 
+
+function adicionarCarregando(){
+
+    const linha =
+        document.createElement("div");
+
+    linha.className =
+        "linha assistente";
+
+    const avatar =
+        document.createElement("div");
+
+    avatar.className =
+        "avatar";
+
+    avatar.textContent =
+        "DA";
+
+    const balao =
+        document.createElement("div");
+
+    balao.className =
+        "balao compondo";
+
+    balao.textContent =
+        "Consultando informações...";
+
+    linha.appendChild(avatar);
+
+    linha.appendChild(balao);
+
+    chat.appendChild(linha);
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+    return linha;
+}
+
+
+async function enviarPergunta(){
+
+    const pergunta =
+        campo.value.trim();
+
+    if(!pergunta){
+        return;
+    }
+
+    adicionarUsuario(pergunta);
+
+    campo.value = "";
+
+    botao.disabled = true;
+
+    status.textContent =
+        "Dr. Agrícola pesquisando...";
+
+    const carregando =
+        adicionarCarregando();
+
+    try{
+
+        const resposta =
+            await fetch(
+                SERVIDOR + "/chat",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                        "application/json"
+                    },
+
+                    body:JSON.stringify({
+                        pergunta:pergunta
+                    })
+                }
+            );
+
+        const dados =
+            await resposta.json();
+
+        carregando.remove();
+
+        if(
+            dados.resposta
+        ){
+
+            adicionarAssistente(
+                dados.resposta
+            );
+
+        }else{
+
+            adicionarAssistente(
+                "Não consegui obter uma resposta do servidor."
+            );
+
+        }
+
+        status.textContent =
+            "Dr. Agrícola conectado";
+
+    }catch(erro){
+
+        carregando.remove();
+
+        adicionarAssistente(
+            "Não consegui conectar ao servidor. Verifique sua internet e tente novamente."
+        );
+
+        status.textContent =
+            "Erro de conexão";
+
+        console.error(erro);
+
+    }finally{
+
+        botao.disabled = false;
+
+        campo.focus();
+    }
+}
+
+
+botao.addEventListener(
+    "click",
+    enviarPergunta
+);
+
+
+campo.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+
+            enviarPergunta();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
     chat.scrollTop =
         chat.scrollHeight;
 }
