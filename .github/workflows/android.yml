@@ -17,24 +17,21 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Instalar Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.7'
+      - name: Configurar Android
+        uses: android-actions/setup-android@v3
 
-      - name: Criar estrutura Android
+      - name: Instalar ferramentas Android
         run: |
-          mkdir -p app/src/main/java/com/dragricola/app
+          yes | sdkmanager --licenses || true
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Criar projeto Android
+        run: |
+          mkdir -p app/src/main/java/com/dragricola
+          mkdir -p app/src/main/res/layout
+          mkdir -p app/src/main/res/drawable
           mkdir -p app/src/main/assets
 
-          cp MainActivity.java app/src/main/java/com/dragricola/app/MainActivity.java
-
-          if [ -f Dr_Agricola_V6_Android.html ]; then
-            cp Dr_Agricola_V6_Android.html app/src/main/assets/index.html
-          fi
-
-      - name: Criar settings.gradle
-        run: |
           cat > settings.gradle <<'EOF'
           pluginManagement {
               repositories {
@@ -56,27 +53,23 @@ jobs:
           include(":app")
           EOF
 
-      - name: Criar build.gradle
-        run: |
           cat > build.gradle <<'EOF'
           plugins {
-              id 'com.android.application' version '8.5.2' apply false
+              id 'com.android.application' version '8.6.1' apply false
           }
           EOF
 
-      - name: Criar app/build.gradle
-        run: |
           cat > app/build.gradle <<'EOF'
           plugins {
               id 'com.android.application'
           }
 
           android {
-              namespace 'com.dragricola.app'
+              namespace 'com.dragricola'
               compileSdk 35
 
               defaultConfig {
-                  applicationId 'com.dragricola.app'
+                  applicationId 'com.dragricola'
                   minSdk 23
                   targetSdk 35
                   versionCode 1
@@ -85,29 +78,23 @@ jobs:
           }
           EOF
 
-      - name: Criar AndroidManifest.xml
-        run: |
-          mkdir -p app/src/main
-
           cat > app/src/main/AndroidManifest.xml <<'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.INTERNET"/>
 
               <application
-                  android:allowBackup="true"
+                  android:theme="@style/AppTheme"
                   android:label="Dr Agrícola"
-                  android:supportsRtl="true"
-                  android:theme="@android:style/Theme.Material.Light.NoActionBar">
+                  android:allowBackup="true">
 
                   <activity
                       android:name=".MainActivity"
                       android:exported="true">
 
                       <intent-filter>
-                          <action android:name="android.intent.action.MAIN" />
-                          <category android:name="android.intent.category.LAUNCHER" />
+                          <action android:name="android.intent.action.MAIN"/>
+                          <category android:name="android.intent.category.LAUNCHER"/>
                       </intent-filter>
 
                   </activity>
@@ -117,4 +104,49 @@ jobs:
           </manifest>
           EOF
 
-      - name: Ger
+          mkdir -p app/src/main/res/values
+
+          cat > app/src/main/res/values/styles.xml <<'EOF'
+          <resources>
+              <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
+                  <item name="android:fontFamily">sans</item>
+                  <item name="android:colorAccent">#16803C</item>
+              </style>
+          </resources>
+          EOF
+
+      - name: Criar MainActivity
+        run: |
+          cat > app/src/main/java/com/dragricola/MainActivity.java <<'EOF'
+          package com.dragricola;
+
+          import android.app.Activity;
+          import android.os.Bundle;
+          import android.webkit.WebView;
+          import android.webkit.WebSettings;
+
+          public class MainActivity extends Activity {
+
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+
+                  WebView webView = new WebView(this);
+                  WebSettings settings = webView.getSettings();
+
+                  settings.setJavaScriptEnabled(true);
+                  settings.setDomStorageEnabled(true);
+                  settings.setAllowFileAccess(true);
+
+                  webView.loadUrl("file:///android_asset/index.html");
+
+                  setContentView(webView);
+              }
+          }
+          EOF
+
+      - name: Procurar aplicativo HTML
+        run: |
+          HTML=$(find . -maxdepth 2 -type f -name "*.html" | head -n 1)
+
+          if [ -n "$HTML" ];
