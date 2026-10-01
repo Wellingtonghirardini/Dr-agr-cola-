@@ -1,0 +1,82 @@
+name: Gerar APK Dr Agricola
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar arquivos
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Preparar projeto Android
+        run: |
+          mkdir -p app/src/main/java/com/dragricola/app
+          mkdir -p app/src/main/assets
+
+          cp MainActivity.java app/src/main/java/com/dragricola/app/MainActivity.java
+
+          if [ -f Dr_Agricola_V6_Android.html ]; then
+            cp Dr_Agricola_V6_Android.html app/src/main/assets/index.html
+          fi
+
+      - name: Gerar projeto
+        run: |
+          cat > settings.gradle <<'EOF'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+
+          rootProject.name = "DrAgricola"
+          include(":app")
+          EOF
+
+          mkdir -p app
+
+          cat > build.gradle <<'EOF'
+          plugins {
+              id 'com.android.application' version '8.5.2' apply false
+          }
+          EOF
+
+          cat > app/build.gradle <<'EOF'
+          plugins {
+              id 'com.android.application'
+          }
+
+          android {
+              namespace 'com.dragricola.app'
+              compileSdk 35
+
+              defaultConfig {
+                  applicationId 'com.dragricola.app'
+                  minSdk 23
+                  targetSdk 35
+                  versionCode 1
+                  versionName '1.0'
+              }
+          }
+          EOF
+
+      - name: Criar APK
+        run
