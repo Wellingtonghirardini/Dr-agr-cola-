@@ -1,4 +1,4 @@
-name: Gerar APK Dr Agricola
+name: Gerar APK Dr. Agrícola
 
 on:
   workflow_dispatch:
@@ -17,139 +17,16 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Criar projeto Android
-        run: |
-          mkdir -p app/src/main/java/com/dragricola/app
-          mkdir -p app/src/main/res/values
-          mkdir -p app/src/main/assets
-
-          cat > settings.gradle <<'EOF'
-          pluginManagement {
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
-          }
-
-          dependencyResolutionManagement {
-              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-              repositories {
-                  google()
-                  mavenCentral()
-              }
-          }
-
-          rootProject.name = "DrAgricola"
-          include(":app")
-          EOF
-
-          cat > build.gradle <<'EOF'
-          plugins {
-              id 'com.android.application' version '8.6.1' apply false
-          }
-          EOF
-
-          cat > app/build.gradle <<'EOF'
-          plugins {
-              id 'com.android.application'
-          }
-
-          android {
-              namespace 'com.dragricola.app'
-              compileSdk 35
-
-              defaultConfig {
-                  applicationId 'com.dragricola.app'
-                  minSdk 23
-                  targetSdk 35
-                  versionCode 1
-                  versionName '1.0'
-              }
-          }
-          EOF
-
-          cat > app/src/main/res/values/strings.xml <<'EOF'
-          <resources>
-              <string name="app_name">Dr Agrícola</string>
-          </resources>
-          EOF
-
-          cat > app/src/main/AndroidManifest.xml <<'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-              <uses-permission android:name="android.permission.INTERNET"/>
-
-              <application
-                  android:theme="@style/AppTheme"
-                  android:label="Dr Agrícola"
-                  android:allowBackup="true">
-
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true">
-
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN"/>
-                          <category android:name="android.intent.category.LAUNCHER"/>
-                      </intent-filter>
-
-                  </activity>
-
-              </application>
-          </manifest>
-          EOF
-
-          cat > app/src/main/res/values/styles.xml <<'EOF'
-          <resources>
-              <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
-                  <item name="android:fontFamily">sans</item>
-                  <item name="android:colorAccent">#2E7D32</item>
-              </style>
-          </resources>
-          EOF
-
-      - name: Criar MainActivity
-        run: |
-          cat > app/src/main/java/com/dragricola/app/MainActivity.java <<'EOF'
-          package com.dragricola.app;
-
-          import android.app.Activity;
-          import android.os.Bundle;
-          import android.webkit.WebSettings;
-          import android.webkit.WebView;
-
-          public class MainActivity extends Activity {
-
-              @Override
-              protected void onCreate(Bundle savedInstanceState) {
-                  super.onCreate(savedInstanceState);
-
-                  WebView webView = new WebView(this);
-                  WebSettings settings = webView.getSettings();
-
-                  settings.setJavaScriptEnabled(true);
-                  settings.setDomStorageEnabled(true);
-
-                  webView.loadUrl("https://www.google.com");
-
-                  setContentView(webView);
-              }
-          }
-          EOF
-
-      - name: Instalar Gradle
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gradle
+      - name: Configurar Android
+        uses: android-actions/setup-android@v3
 
       - name: Compilar APK
         run: |
-          gradle assembleDebug --no-daemon
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
       - name: Enviar APK
         uses: actions/upload-artifact@v4
         with:
           name: Dr-Agricola-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app
