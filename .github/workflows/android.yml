@@ -17,19 +17,10 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Configurar Android
-        uses: android-actions/setup-android@v3
-
-      - name: Instalar ferramentas Android
-        run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
-
       - name: Criar projeto Android
         run: |
-          mkdir -p app/src/main/java/com/dragricola
-          mkdir -p app/src/main/res/layout
-          mkdir -p app/src/main/res/drawable
+          mkdir -p app/src/main/java/com/dragricola/app
+          mkdir -p app/src/main/res/values
           mkdir -p app/src/main/assets
 
           cat > settings.gradle <<'EOF'
@@ -65,11 +56,11 @@ jobs:
           }
 
           android {
-              namespace 'com.dragricola'
+              namespace 'com.dragricola.app'
               compileSdk 35
 
               defaultConfig {
-                  applicationId 'com.dragricola'
+                  applicationId 'com.dragricola.app'
                   minSdk 23
                   targetSdk 35
                   versionCode 1
@@ -78,7 +69,14 @@ jobs:
           }
           EOF
 
+          cat > app/src/main/res/values/strings.xml <<'EOF'
+          <resources>
+              <string name="app_name">Dr Agrícola</string>
+          </resources>
+          EOF
+
           cat > app/src/main/AndroidManifest.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
               <uses-permission android:name="android.permission.INTERNET"/>
@@ -100,30 +98,27 @@ jobs:
                   </activity>
 
               </application>
-
           </manifest>
           EOF
-
-          mkdir -p app/src/main/res/values
 
           cat > app/src/main/res/values/styles.xml <<'EOF'
           <resources>
               <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
                   <item name="android:fontFamily">sans</item>
-                  <item name="android:colorAccent">#16803C</item>
+                  <item name="android:colorAccent">#2E7D32</item>
               </style>
           </resources>
           EOF
 
       - name: Criar MainActivity
         run: |
-          cat > app/src/main/java/com/dragricola/MainActivity.java <<'EOF'
-          package com.dragricola;
+          cat > app/src/main/java/com/dragricola/app/MainActivity.java <<'EOF'
+          package com.dragricola.app;
 
           import android.app.Activity;
           import android.os.Bundle;
-          import android.webkit.WebView;
           import android.webkit.WebSettings;
+          import android.webkit.WebView;
 
           public class MainActivity extends Activity {
 
@@ -136,17 +131,25 @@ jobs:
 
                   settings.setJavaScriptEnabled(true);
                   settings.setDomStorageEnabled(true);
-                  settings.setAllowFileAccess(true);
 
-                  webView.loadUrl("file:///android_asset/index.html");
+                  webView.loadUrl("https://www.google.com");
 
                   setContentView(webView);
               }
           }
           EOF
 
-      - name: Procurar aplicativo HTML
+      - name: Instalar Gradle
         run: |
-          HTML=$(find . -maxdepth 2 -type f -name "*.html" | head -n 1)
+          sudo apt-get update
+          sudo apt-get install -y gradle
 
-          if [ -n "$HTML" ];
+      - name: Compilar APK
+        run: |
+          gradle assembleDebug --no-daemon
+
+      - name: Enviar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dr-Agricola-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
