@@ -1,4 +1,4 @@
-package com.dragricola.aplicativo;
+package com.dragricola.app;
 
 import android.Manifest;
 import android.app.Activity;
