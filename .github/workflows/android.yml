@@ -17,17 +17,49 @@ jobs:
           mkdir projeto
           unzip -q Dr_Agricola_V6_Android.zip -d projeto
 
-          cd projeto
+          echo "Conteúdo do ZIP:"
+          find projeto -maxdepth 4 -type f | sort
 
-          mv App app
-          mv Build.gradle build.gradle
-          mv Settings settings.gradle
+          ROOT=$(dirname "$(find projeto -type f \( -name 'Settings' -o -name 'settings.gradle' \) | head -n 1)")
 
-          mv app/src/main/Java app/src/main/java
-          mv app/src/main/Res app/src/main/res
-          mv app/src/main/Assets app/src/main/assets
+          echo "Pasta do projeto encontrada:"
+          echo "$ROOT"
 
-          mv app/src/main/java/com/dragricola/App app/src/main/java/com/dragricola/app
+          if [ -d "$ROOT/App" ]; then
+            mv "$ROOT/App" "$ROOT/app"
+          fi
+
+          if [ -f "$ROOT/Build.gradle" ]; then
+            mv "$ROOT/Build.gradle" "$ROOT/build.gradle"
+          fi
+
+          if [ -f "$ROOT/Settings" ]; then
+            mv "$ROOT/Settings" "$ROOT/settings.gradle"
+          fi
+
+          if [ -d "$ROOT/app/src/main/Java" ]; then
+            mv "$ROOT/app/src/main/Java" "$ROOT/app/src/main/java"
+          fi
+
+          if [ -d "$ROOT/app/src/main/Res" ]; then
+            mv "$ROOT/app/src/main/Res" "$ROOT/app/src/main/res"
+          fi
+
+          if [ -d "$ROOT/app/src/main/Assets" ]; then
+            mv "$ROOT/app/src/main/Assets" "$ROOT/app/src/main/assets"
+          fi
+
+          if [ -d "$ROOT/app/src/main/java/com/dragricola/App" ]; then
+            mv "$ROOT/app/src/main/java/com/dragricola/App" "$ROOT/app/src/main/java/com/dragricola/app"
+          fi
+
+          echo "Estrutura final:"
+          find "$ROOT" -maxdepth 6 -type f | sort
+
+          cp -r "$ROOT"/. projeto_final 2>/dev/null || true
+
+          echo "Projeto preparado em:"
+          find "$ROOT" -maxdepth 6 -type f | sort
 
       - name: Configurar Java
         uses: actions/setup-java@v4
@@ -41,11 +73,13 @@ jobs:
           gradle-version: '8.7'
 
       - name: Compilar APK
-        working-directory: projeto
-        run: gradle assembleDebug
+        run: |
+          ROOT=$(dirname "$(find projeto -type f \( -name 'settings.gradle' -o -name 'Settings' \) | head -n 1)")
+          cd "$ROOT"
+          gradle assembleDebug
 
       - name: Enviar APK
         uses: actions/upload-artifact@v4
         with:
           name: Dr-Agricola-APK
-          path: projeto/app/build/outputs/apk/debug/*.apk
+          path: projeto/**/app/build/outputs/apk/debug/*.apk
