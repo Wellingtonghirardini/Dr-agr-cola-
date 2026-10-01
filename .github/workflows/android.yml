@@ -15,12 +15,13 @@ jobs:
         run: |
           rm -rf projeto
           mkdir projeto
+
           unzip -q Dr_Agricola_V6_Android.zip -d projeto
 
           echo "Conteúdo do ZIP:"
-          find projeto -maxdepth 4 -type f | sort
+          find projeto -maxdepth 6 -type f | sort
 
-          ROOT=$(dirname "$(find projeto -type f \( -name 'Settings' -o -name 'settings.gradle' \) | head -n 1)")
+          ROOT=$(dirname "$(find projeto -type f \( -name 'settings.gradle' -o -name 'Settings' \) | head -n 1)")
 
           echo "Pasta do projeto encontrada:"
           echo "$ROOT"
@@ -53,13 +54,11 @@ jobs:
             mv "$ROOT/app/src/main/java/com/dragricola/App" "$ROOT/app/src/main/java/com/dragricola/app"
           fi
 
-          echo "Estrutura final:"
-          find "$ROOT" -maxdepth 6 -type f | sort
+          echo "android.useAndroidX=true" > "$ROOT/gradle.properties"
+          echo "android.enableJetifier=true" >> "$ROOT/gradle.properties"
 
-          cp -r "$ROOT"/. projeto_final 2>/dev/null || true
-
-          echo "Projeto preparado em:"
-          find "$ROOT" -maxdepth 6 -type f | sort
+          echo "Estrutura final do projeto:"
+          find "$ROOT" -maxdepth 8 -type f | sort
 
       - name: Configurar Java
         uses: actions/setup-java@v4
