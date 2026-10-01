@@ -12,7 +12,8 @@ const client = new OpenAI({
 app.get("/", (req, res) => {
   res.json({
     status: "online",
-    aplicativo: "Dr. Agrícola"
+    aplicativo: "Dr. Agrícola",
+    ia: "conectada"
   });
 });
 
@@ -28,6 +29,7 @@ app.post("/chat", async (req, res) => {
 
     const resposta = await client.responses.create({
       model: "gpt-5.6-luna",
+
       instructions: `
 Você é o Dr. Agrícola, um assistente especializado em máquinas agrícolas.
 
@@ -47,7 +49,7 @@ Você pode ajudar com:
 
 Responda sempre em português do Brasil.
 
-Se a pergunta depender do modelo exato da máquina,
+Quando a pergunta depender do modelo exato da máquina,
 peça marca, modelo, ano e número de série quando necessário.
 
 Nunca invente especificações técnicas, códigos de peças,
@@ -57,7 +59,8 @@ Quando não tiver certeza, deixe isso claro.
 
 Ao orientar testes mecânicos ou elétricos,
 explique os cuidados de segurança necessários.
-      `,
+`,
+
       input: mensagem
     });
 
@@ -66,10 +69,11 @@ explique os cuidados de segurança necessários.
     });
 
   } catch (erro) {
-    console.error(erro);
+    console.error("ERRO OPENAI:", erro);
 
     res.status(500).json({
-      error: "Erro ao consultar o Dr. Agrícola."
+      error: "Erro ao consultar a inteligência artificial.",
+      details: erro?.message || "Erro desconhecido"
     });
   }
 });
