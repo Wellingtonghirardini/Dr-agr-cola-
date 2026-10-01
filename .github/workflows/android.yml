@@ -1,84 +1,25 @@
-name: Gerar APK Dr. Agrícola
+plugins {
+    id 'com.android.application'
+}
 
-on:
-  workflow_dispatch:
+android {
+    namespace 'com.dragricola.app'
+    compileSdk 35
 
-jobs:
-  construir:
-    runs-on: ubuntu-latest
+    defaultConfig {
+        applicationId 'com.dragricola.app'
+        minSdk 24
+        targetSdk 35
+        versionCode 6
+        versionName '6.0'
+    }
+}
 
-    steps:
-      - name: Baixar arquivos
-        uses: actions/checkout@v4
+dependencies {
+    implementation 'androidx.core:core:1.15.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.activity:activity:1.10.1'
+    implementation 'androidx.webkit:webkit:1.12.1'
 
-      - name: Preparar projeto Android
-        run: |
-          rm -rf projeto
-          mkdir projeto
-
-          unzip -q Dr_Agricola_V6_Android.zip -d projeto
-
-          echo "Conteúdo do ZIP:"
-          find projeto -maxdepth 6 -type f | sort
-
-          ROOT=$(dirname "$(find projeto -type f \( -name 'settings.gradle' -o -name 'Settings' \) | head -n 1)")
-
-          echo "Pasta do projeto encontrada:"
-          echo "$ROOT"
-
-          if [ -d "$ROOT/App" ]; then
-            mv "$ROOT/App" "$ROOT/app"
-          fi
-
-          if [ -f "$ROOT/Build.gradle" ]; then
-            mv "$ROOT/Build.gradle" "$ROOT/build.gradle"
-          fi
-
-          if [ -f "$ROOT/Settings" ]; then
-            mv "$ROOT/Settings" "$ROOT/settings.gradle"
-          fi
-
-          if [ -d "$ROOT/app/src/main/Java" ]; then
-            mv "$ROOT/app/src/main/Java" "$ROOT/app/src/main/java"
-          fi
-
-          if [ -d "$ROOT/app/src/main/Res" ]; then
-            mv "$ROOT/app/src/main/Res" "$ROOT/app/src/main/res"
-          fi
-
-          if [ -d "$ROOT/app/src/main/Assets" ]; then
-            mv "$ROOT/app/src/main/Assets" "$ROOT/app/src/main/assets"
-          fi
-
-          if [ -d "$ROOT/app/src/main/java/com/dragricola/App" ]; then
-            mv "$ROOT/app/src/main/java/com/dragricola/App" "$ROOT/app/src/main/java/com/dragricola/app"
-          fi
-
-          echo "android.useAndroidX=true" > "$ROOT/gradle.properties"
-          echo "android.enableJetifier=true" >> "$ROOT/gradle.properties"
-
-          echo "Estrutura final do projeto:"
-          find "$ROOT" -maxdepth 8 -type f | sort
-
-      - name: Configurar Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Configurar Gradle
-        uses: gradle/actions/setup-gradle@v6
-        with:
-          gradle-version: '8.9'
-
-      - name: Compilar APK
-        run: |
-          ROOT=$(dirname "$(find projeto -type f \( -name 'settings.gradle' -o -name 'Settings' \) | head -n 1)")
-          cd "$ROOT"
-          gradle assembleDebug
-
-      - name: Enviar APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Dr-Agricola-APK
-          path: projeto/**/app/build/outputs/apk/debug/*.apk
+    implementation 'com.google.android.material:material:1.12.0'
+}
