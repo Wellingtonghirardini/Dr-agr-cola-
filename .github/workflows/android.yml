@@ -17,18 +17,99 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Preparar projeto Android
+      - name: Criar estrutura Android
         run: |
           mkdir -p app/src/main/java/com/dragricola/app
           mkdir -p app/src/main/assets
-
-          cp MainActivity.java app/src/main/java/com/dragricola/app/MainActivity.java
 
           if [ -f Dr_Agricola_V6_Android.html ]; then
             cp Dr_Agricola_V6_Android.html app/src/main/assets/index.html
           fi
 
-      - name: Gerar projeto
+          cat > app/src/main/AndroidManifest.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+              <uses-permission android:name="android.permission.INTERNET" />
+
+              <application
+                  android:theme="@style/AppTheme"
+                  android:label="Dr. Agrícola"
+                  android:usesCleartextTraffic="true">
+
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true">
+
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+
+                  </activity>
+
+              </application>
+
+          </manifest>
+          EOF
+
+          mkdir -p app/src/main/res/values
+
+          cat > app/src/main/res/values/styles.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
+                  <item name="android:fontFamily">sans</item>
+                  <item name="android:colorAccent">#2E7D32</item>
+                  <item name="android:navigationBarColor">#000000</item>
+                  <item name="android:statusBarColor">#1B5E20</item>
+              </style>
+          </resources>
+          EOF
+
+          cat > app/src/main/java/com/dragricola/app/MainActivity.java <<'EOF'
+          package com.dragricola.app;
+
+          import android.app.Activity;
+          import android.os.Bundle;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+
+          public class MainActivity extends Activity {
+
+              private WebView webView;
+
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+
+                  webView = new WebView(this);
+                  setContentView(webView);
+
+                  WebSettings settings = webView.getSettings();
+                  settings.setJavaScriptEnabled(true);
+                  settings.setDomStorageEnabled(true);
+                  settings.setAllowFileAccess(true);
+                  settings.setAllowContentAccess(true);
+
+                  webView.setWebViewClient(new WebViewClient());
+
+                  webView.loadUrl("file:///android_asset/index.html");
+              }
+
+              @Override
+              public void onBackPressed() {
+                  if (webView.canGoBack()) {
+                      webView.goBack();
+                  } else {
+                      super.onBackPressed();
+                  }
+              }
+          }
+          EOF
+
+      - name: Criar projeto Gradle
         run: |
           cat > settings.gradle <<'EOF'
           pluginManagement {
@@ -50,8 +131,6 @@ jobs:
           rootProject.name = "DrAgricola"
           include(":app")
           EOF
-
-          mkdir -p app
 
           cat > build.gradle <<'EOF'
           plugins {
@@ -79,4 +158,11 @@ jobs:
           EOF
 
       - name: Criar APK
-        run
+        run: |
+          gradle assembleDebug --no-daemon
+
+      - name: Disponibilizar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dr-Agricola-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
