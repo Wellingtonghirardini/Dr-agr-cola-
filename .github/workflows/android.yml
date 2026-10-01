@@ -57,6 +57,8 @@ jobs:
           echo "android.useAndroidX=true" > "$ROOT/gradle.properties"
           echo "android.enableJetifier=true" >> "$ROOT/gradle.properties"
 
+          sed -i "/implementation 'androidx.webkit:webkit:1.12.1'/a\    implementation 'com.google.android.material:material:1.12.0'" "$ROOT/app/build.gradle"
+
           echo "Estrutura final do projeto:"
           find "$ROOT" -maxdepth 8 -type f | sort
 
