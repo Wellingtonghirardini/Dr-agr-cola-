@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Agrícola</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f5f7;
+        }
+
+        header {
+            background: #1b5e20;
+            color: white;
+            padding: 18px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        header p {
+            margin: 6px 0 0;
+            font-size: 14px;
+        }
+
+        .chat {
+            padding: 15px;
+            padding-bottom: 90px;
+        }
+
+        .mensagem {
+            max-width: 85%;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 15px;
+            line-height: 1.4;
+        }
+
+        .assistente {
+            background: white;
+            color: #222;
+            border: 1px solid #ddd;
+        }
+
+        .usuario {
+            background: #1b5e20;
+            color: white;
+            margin-left: auto;
+        }
+
+        .entrada {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            padding: 10px;
+            background: white;
+            border-top: 1px solid #ddd;
+        }
+
+        #pergunta {
+            flex: 1;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        button {
+            margin-left: 8px;
+            width: 50px;
+            border: none;
+            border-radius: 50%;
+            background: #1b5e20;
+            color: white;
+            font-size: 20px;
+        }
+
+        .carregando {
+            opacity: 0.6;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🚜 Dr. Agrícola</h1>
+    <p>Seu assistente para máquinas agrícolas</p>
+</header>
+
+<div id="chat" class="chat">
+    <div class="mensagem assistente">
+        Olá! Eu sou o <strong>Dr. Agrícola</strong>. 👨‍🔧🚜<br><br>
+        Posso ajudar você a diagnosticar problemas em tratores,
+        máquinas agrícolas, motores, transmissões, hidráulica e elétrica.
+        <br><br>
+        Qual é o problema da máquina?
+    </div>
+</div>
+
+<div class="entrada">
+    <input
+        id="pergunta"
+        type="text"
+        placeholder="Digite sua pergunta..."
+        autocomplete="off"
+    >
+
+    <button onclick="enviar()">➤</button>
+</div>
+
+<script>
+
+const chat = document.getElementById("chat");
+const pergunta = document.getElementById("pergunta");
+
+function adicionarMensagem(texto, classe) {
+    const div = document.createElement("div");
+    div.className = "mensagem " + classe;
+    div.innerHTML = texto;
+    chat.appendChild(div);
+
+    window.scrollTo(0, document.body.scrollHeight);
+}
+
+async function enviar() {
+
+    const texto = pergunta.value.trim();
+
+    if (!texto) return;
+
+    adicionarMensagem(texto, "usuario");
+
+    pergunta.value = "";
+
+    const carregando = document.createElement("div");
+    carregando.className = "mensagem assistente carregando";
+    carregando.innerText = "Dr. Agrícola está analisando...";
+    chat.appendChild(carregando);
+
+    try {
+
+        const resposta = await fetch(
+            "https://dr-agr-cola-1.onrender.com/chat",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    mensagem: texto
+                })
+            }
+        );
+
+        const dados = await resposta.json();
+
+        carregando.remove();
+
+        if (dados.resposta) {
+            adicionarMensagem(dados.resposta, "assistente");
+        } else {
+            adicionarMensagem(
+                "Não consegui obter uma resposta do servidor.",
+                "assistente"
+            );
+        }
+
+    } catch (erro) {
+
+        carregando.remove();
+
+        adicionarMensagem(
+            "Não consegui conectar ao servidor. Verifique sua internet e tente novamente.",
+            "assistente"
+        );
+
+        console.error(erro);
+    }
+}
+
+pergunta.addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        enviar();
+    }
+});
+
+</script>
+
+</body>
+</html>
