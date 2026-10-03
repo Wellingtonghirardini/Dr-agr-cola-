@@ -61,7 +61,7 @@ app.post("/chat", async (req, res) => {
 
     const resposta = await client.responses.create({
 
-      model: "gpt-5.6-luna",
+      model: "gpt-6-luna",
 
       instructions: `
 Você é o Dr. Agrícola, um assistente especializado
