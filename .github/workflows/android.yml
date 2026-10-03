@@ -23,27 +23,24 @@ jobs:
           unzip -q Dr_Agricola_V6_Android.zip -d projeto
 
           echo ""
-          echo "Arquivos encontrados:"
+          echo "Conteúdo do ZIP:"
           find projeto -maxdepth 8 -type f | sort
 
           echo ""
-          echo "Procurando gradlew..."
+          echo "Procurando settings.gradle..."
 
-          GRADLEW=$(find projeto -type f -name "gradlew" | head -n 1)
+          SETTINGS=$(find projeto -type f -name "settings.gradle" | head -n 1)
 
-          if [ -z "$GRADLEW" ]; then
-            echo "ERRO: gradlew não foi encontrado dentro do ZIP."
+          if [ -z "$SETTINGS" ]; then
+            echo "ERRO: settings.gradle não foi encontrado."
             exit 1
           fi
 
-          ROOT=$(dirname "$GRADLEW")
+          ROOT=$(dirname "$SETTINGS")
 
           echo ""
-          echo "Projeto Android encontrado em:"
+          echo "Pasta do projeto encontrada:"
           echo "$ROOT"
-
-          echo ""
-          echo "Corrigindo nomes de pastas..."
 
           if [ -d "$ROOT/App" ]; then
             mv "$ROOT/App" "$ROOT/app"
@@ -89,10 +86,11 @@ jobs:
           wc -l "$ROOT/app/src/main/assets/index.html"
 
           echo ""
-          echo "Primeiras linhas do index.html:"
+          echo "Primeiras linhas:"
           head -n 10 "$ROOT/app/src/main/assets/index.html"
 
           echo ""
+          echo "Salvando caminho do projeto..."
           echo "ROOT=$ROOT" >> "$GITHUB_ENV"
 
       - name: Configurar Java
@@ -114,18 +112,21 @@ jobs:
           echo "$ROOT"
 
           echo ""
-          echo "Conteúdo:"
+          echo "Conteúdo da pasta:"
           ls -la "$ROOT"
 
           echo ""
-          echo "Verificando Gradle Wrapper:"
-          ls -la "$ROOT/gradlew"
-
-          chmod +x "$ROOT/gradlew"
+          echo "Executando Gradle..."
 
           cd "$ROOT"
 
-          ./gradlew assembleDebug
+          gradle assembleDebug
+
+      - name: Verificar APK
+        run: |
+          echo "Procurando APK..."
+
+          find "$ROOT/app/build/outputs" -type f -name "*.apk" -print
 
       - name: Enviar APK
         uses: actions/upload-artifact@v4
