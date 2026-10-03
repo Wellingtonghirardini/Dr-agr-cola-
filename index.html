@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dr. Agrícola</title><style>
 
-<title>Dr. Agrícola</title>
-
-<style>
 *{
     box-sizing:border-box;
 }
@@ -184,97 +180,90 @@ header{
     font-size:13px;
     margin:8px;
 }
-</style>
-</head>
 
-<body>
+</style></head><body><header><div class="logo">
+    DA
+</div>
 
-<header>
+<div class="titulo">
 
-    <div class="logo">
+    <h1>Dr. Agrícola</h1>
+
+    <p>
+        Seu assistente de máquinas agrícolas
+    </p>
+
+</div>
+
+</header><div id="chat" class="chat"><div class="linha assistente">
+
+    <div class="avatar">
         DA
     </div>
 
-    <div class="titulo">
-        <h1>Dr. Agrícola</h1>
-        <p>Seu assistente de máquinas agrícolas</p>
-    </div>
+    <div class="balao">
 
-</header>
+        Olá, Branco Billy! 👋<br><br>
 
-<div id="chat" class="chat">
+        Sou o <strong>Dr. Agrícola</strong>.<br><br>
 
-    <div class="linha assistente">
-
-        <div class="avatar">
-            DA
-        </div>
-
-        <div class="balao">
-            Olá, Wellington! 👋<br><br>
-
-            Sou o <strong>Dr. Agrícola</strong>.<br><br>
-
-            Pode me perguntar sobre tratores, motores,
-            transmissões, hidráulica, elétrica, sensores,
-            solenoides e diagnóstico de máquinas agrícolas.
-        </div>
+        Pode me perguntar sobre tratores,
+        motores, transmissões, hidráulica,
+        elétrica, sensores, solenoides
+        e diagnóstico de máquinas agrícolas.
 
     </div>
 
 </div>
 
-<div class="status" id="status">
+</div><div class="status" id="status">
     Dr. Agrícola conectado
+</div><div class="area-envio"><input
+    id="pergunta"
+    type="text"
+    placeholder="Digite sua pergunta..."
+    autocomplete="off"
+>
+
+<button
+    id="enviar"
+    type="button"
+>
+    ➤
+</button>
+
+</div><div class="menu"><div>
+    🏠<br>
+    Início
 </div>
 
-<div class="area-envio">
-
-    <input
-        id="pergunta"
-        type="text"
-        placeholder="Digite sua pergunta..."
-        autocomplete="off"
-    >
-
-    <button id="enviar" type="button">
-        ➤
-    </button>
-
+<div>
+    🤖<br>
+    Chat
 </div>
 
-<div class="menu">
-
-    <div>
-        🏠<br>
-        Início
-    </div>
-
-    <div>
-        🤖<br>
-        Chat
-    </div>
-
-    <div>
-        👤<br>
-        Perfil
-    </div>
-
+<div>
+    👤<br>
+    Perfil
 </div>
 
-<script>
+</div><script>
 
 const SERVIDOR =
     "https://dr-agr-cola-1.onrender.com";
 
+
 const campo =
     document.getElementById("pergunta");
+
 
 const botao =
     document.getElementById("enviar");
 
+
 const chat =
     document.getElementById("chat");
+
 
 const status =
     document.getElementById("status");
@@ -288,185 +277,28 @@ function adicionarUsuario(texto){
     linha.className =
         "linha usuario";
 
+
     const balao =
         document.createElement("div");
 
     balao.className =
         "balao";
 
+
     balao.textContent =
         texto;
 
-    linha.appendChild(balao);
 
-    chat.appendChild(linha);
-    chat.scrollTop =
-        chat.scrollHeight;
-}
+    linha.appendChild(
+        balao
+    );
 
 
-function adicionarCarregando(){
-
-    const linha =
-        document.createElement("div");
-
-    linha.className =
-        "linha assistente";
-
-    const avatar =
-        document.createElement("div");
-
-    avatar.className =
-        "avatar";
-
-    avatar.textContent =
-        "DA";
-
-    const balao =
-        document.createElement("div");
-
-    balao.className =
-        "balao compondo";
-
-    balao.textContent =
-        "Consultando informações...";
-
-    linha.appendChild(avatar);
-
-    linha.appendChild(balao);
-
-    chat.appendChild(linha);
-
-    chat.scrollTop =
-        chat.scrollHeight;
-
-    return linha;
-}
+    chat.appendChild(
+        linha
+    );
 
 
-async function enviarPergunta(){
-
-    const pergunta =
-        campo.value.trim();
-
-    if(!pergunta){
-        return;
-    }
-
-    adicionarUsuario(pergunta);
-
-    campo.value = "";
-
-    botao.disabled = true;
-
-    status.textContent =
-        "Dr. Agrícola pesquisando...";
-
-    const carregando =
-        adicionarCarregando();
-
-    try{
-
-        const resposta =
-            await fetch(
-                SERVIDOR + "/chat",
-                {
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                        "application/json"
-                    },
-
-                    body:JSON.stringify({
-                        pergunta:pergunta
-                    })
-                }
-            );
-
-        const dados =
-            await resposta.json();
-
-        carregando.remove();
-
-        if(
-            dados.resposta
-        ){
-
-            adicionarAssistente(
-                dados.resposta
-            );
-
-        }else{
-
-            adicionarAssistente(
-                "Não consegui obter uma resposta do servidor."
-            );
-
-        }
-
-        status.textContent =
-            "Dr. Agrícola conectado";
-
-    }catch(erro){
-
-        carregando.remove();
-
-        adicionarAssistente(
-            "Não consegui conectar ao servidor. Verifique sua internet e tente novamente."
-        );
-
-        status.textContent =
-            "Erro de conexão";
-
-        console.error(erro);
-
-    }finally{
-
-        botao.disabled = false;
-
-        campo.focus();
-    }
-}
-
-
-botao.addEventListener(
-    "click",
-    enviarPergunta
-);
-
-
-campo.addEventListener(
-    "keydown",
-    function(event){
-
-        if(event.key === "Enter"){
-
-            enviarPergunta();
-
-        }
-
-    }
-);
-botao.addEventListener(
-    "click",
-    enviarPergunta
-);
-
-campo.addEventListener(
-    "keydown",
-    function(event){
-
-        if(event.key === "Enter"){
-            enviarPergunta();
-        }
-
-    }
-);
-</script>
-
-</body>
-</html>
     chat.scrollTop =
         chat.scrollHeight;
 }
@@ -480,14 +312,17 @@ function adicionarAssistente(texto){
     linha.className =
         "linha assistente";
 
+
     const avatar =
         document.createElement("div");
 
     avatar.className =
         "avatar";
 
+
     avatar.textContent =
         "DA";
+
 
     const balao =
         document.createElement("div");
@@ -495,14 +330,25 @@ function adicionarAssistente(texto){
     balao.className =
         "balao";
 
+
     balao.textContent =
         texto;
 
-    linha.appendChild(avatar);
 
-    linha.appendChild(balao);
+    linha.appendChild(
+        avatar
+    );
 
-    chat.appendChild(linha);
+
+    linha.appendChild(
+        balao
+    );
+
+
+    chat.appendChild(
+        linha
+    );
+
 
     chat.scrollTop =
         chat.scrollHeight;
@@ -512,4 +358,223 @@ function adicionarAssistente(texto){
 function adicionarCarregando(){
 
     const linha =
-        document.createElement("
+        document.createElement("div");
+
+    linha.className =
+        "linha assistente";
+
+
+    const avatar =
+        document.createElement("div");
+
+    avatar.className =
+        "avatar";
+
+
+    avatar.textContent =
+        "DA";
+
+
+    const balao =
+        document.createElement("div");
+
+    balao.className =
+        "balao compondo";
+
+
+    balao.textContent =
+        "Consultando informações...";
+
+
+    linha.appendChild(
+        avatar
+    );
+
+
+    linha.appendChild(
+        balao
+    );
+
+
+    chat.appendChild(
+        linha
+    );
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+
+    return linha;
+}
+
+
+async function enviarPergunta(){
+
+    const pergunta =
+        campo.value.trim();
+
+
+    if(!pergunta){
+
+        return;
+    }
+
+
+    adicionarUsuario(
+        pergunta
+    );
+
+
+    campo.value =
+        "";
+
+
+    botao.disabled =
+        true;
+
+
+    status.textContent =
+        "Dr. Agrícola pesquisando...";
+
+
+    const carregando =
+        adicionarCarregando();
+
+
+    try{
+
+        const resposta =
+            await fetch(
+
+                SERVIDOR + "/chat",
+
+                {
+
+                    method:
+                        "POST",
+
+
+                    headers:{
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+
+                    body:
+
+                        JSON.stringify({
+
+                            pergunta:
+                                pergunta
+
+                        })
+
+                }
+
+            );
+
+
+        if(!resposta.ok){
+
+            throw new Error(
+                "Erro HTTP: " +
+                resposta.status
+            );
+
+        }
+
+
+        const dados =
+            await resposta.json();
+
+
+        carregando.remove();
+
+
+        if(dados.resposta){
+
+            adicionarAssistente(
+                dados.resposta
+            );
+
+
+            status.textContent =
+                "Dr. Agrícola conectado";
+
+        }else{
+
+            adicionarAssistente(
+
+                "O servidor respondeu, " +
+                "mas não enviou uma resposta."
+
+            );
+
+
+            status.textContent =
+                "Resposta inválida";
+        }
+
+
+    }catch(erro){
+
+        carregando.remove();
+
+
+        adicionarAssistente(
+
+            "Não consegui conectar ao servidor. " +
+            "Verifique sua internet e tente novamente."
+
+        );
+
+
+        status.textContent =
+            "Erro de conexão";
+
+
+        console.error(
+            "Erro no chat:",
+            erro
+        );
+
+
+    }finally{
+
+        botao.disabled =
+            false;
+
+
+        campo.focus();
+
+    }
+
+}
+
+
+botao.addEventListener(
+    "click",
+    enviarPergunta
+);
+
+
+campo.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+
+            event.preventDefault();
+
+            enviarPergunta();
+
+        }
+
+    }
+);
+
+</script></body>
+    </html>
