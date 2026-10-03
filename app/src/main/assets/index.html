@@ -22,10 +22,10 @@ button{border:0;border-radius:14px;padding:12px 15px;font-weight:700;background:
 </head>
 <body>
 <div class="app">
-<header><img src="assistente_branco_billy.jpg"><div><b>Dr. Agrícola</b><small>Seu assistente de máquinas agrícolas</small></div></header>
+<header><img src="assistente_branco_billy.png"><div><b>Dr. Agrícola</b><small>Seu assistente de máquinas agrícolas</small></div></header>
 <main id="home">
 <div class="hero">
-<img src="assistente_branco_billy.jpg">
+<img src="assistente_branco_billy.png">
 <h1>Olá! Eu sou o Dr. Agrícola.</h1>
 <p>Seu assistente técnico para máquinas agrícolas.</p>
 <button onclick="openChat()">💬 Conversar com o Dr. Agrícola</button>
@@ -42,7 +42,7 @@ button{border:0;border-radius:14px;padding:12px 15px;font-weight:700;background:
 <nav class="nav"><button class="active" onclick="home()">🏠<br>Início</button><button onclick="openChat()">🤖<br>Chat</button><button onclick="profile()">👤<br>Perfil</button></nav>
 </div>
 <script>
-const img='assistente_branco_billy.jpg';
+const img='assistente_branco_billy.png';
 function p(){try{return JSON.parse(localStorage.getItem('dr_profile')||'{}')}catch(e){return{}}}
 function home(){document.getElementById('home').style.display='block';document.getElementById('chat').style.display='none';document.getElementById('composer').style.display='none'}
 function openChat(){document.getElementById('home').style.display='none';document.getElementById('chat').style.display='block';document.getElementById('composer').style.display='flex';if(!document.getElementById('messages').children.length)welcome()}
