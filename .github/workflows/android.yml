@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Baixar arquivos
         uses: actions/checkout@v4
 
@@ -57,10 +58,16 @@ jobs:
           echo "android.useAndroidX=true" > "$ROOT/gradle.properties"
           echo "android.enableJetifier=true" >> "$ROOT/gradle.properties"
 
-          sed -i "/implementation 'androidx.webkit:webkit:1.12.1'/a\    implementation 'com.google.android.material:material:1.12.0'" "$ROOT/app/build.gradle"
+          mkdir -p "$ROOT/app/src/main/assets"
 
-          echo "Estrutura final do projeto:"
-          find "$ROOT" -maxdepth 8 -type f | sort
+          echo "Copiando index.html correto para o APK..."
+          cp index.html "$ROOT/app/src/main/assets/index.html"
+
+          echo "Verificando index.html usado no APK:"
+          wc -l "$ROOT/app/src/main/assets/index.html"
+
+          echo "Primeiras linhas:"
+          head -n 10 "$ROOT/app/src/main/assets/index.html"
 
       - name: Configurar Java
         uses: actions/setup-java@v4
@@ -71,16 +78,16 @@ jobs:
       - name: Configurar Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
-          gradle-version: '8.9'
+          gradle-version: '8.7'
 
-      - name: Compilar APK
+      - name: Gerar APK
+        working-directory: ${{ github.workspace }}/projeto
         run: |
-          ROOT=$(dirname "$(find projeto -type f \( -name 'settings.gradle' -o -name 'Settings' \) | head -n 1)")
-          cd "$ROOT"
-          gradle assembleDebug
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
       - name: Enviar APK
         uses: actions/upload-artifact@v4
         with:
           name: Dr-Agricola-APK
-          path: projeto/**/app/build/outputs/apk/debug/*.apk
+          path: projeto/app/build/outputs/apk/debug/app-debug.apk
