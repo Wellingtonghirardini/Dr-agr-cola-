@@ -1,253 +1,302 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dr. Agrícola</title><style>
 
-*{
-    box-sizing:border-box;
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Dr. Agrícola</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
 }
 
-html,body{
-    margin:0;
-    padding:0;
-    width:100%;
-    height:100%;
-    font-family:Arial,sans-serif;
-    background:#f3f6f4;
-    color:#222;
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background: #f3f6f4;
+    color: #222;
 }
 
-body{
-    display:flex;
-    flex-direction:column;
+body {
+    display: flex;
+    flex-direction: column;
 }
 
-header{
-    background:#08783d;
-    color:white;
-    padding:18px 20px;
-    display:flex;
-    align-items:center;
-    gap:15px;
+header {
+    background: #08783d;
+    color: white;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-.logo{
-    width:70px;
-    height:70px;
-    border-radius:50%;
-    background:#f1f1f1;
-    border:3px solid white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:25px;
-    font-weight:bold;
-    color:#08783d;
-    flex-shrink:0;
+.logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: #f1f1f1;
+    border: 3px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    font-weight: bold;
+    color: #08783d;
+    flex-shrink: 0;
 }
 
-.titulo h1{
-    margin:0;
-    font-size:30px;
+.titulo h1 {
+    margin: 0;
+    font-size: 30px;
 }
 
-.titulo p{
-    margin:5px 0 0;
-    font-size:17px;
+.titulo p {
+    margin: 5px 0 0;
+    font-size: 17px;
 }
 
-.chat{
-    flex:1;
-    overflow-y:auto;
-    padding:25px 20px 110px;
+.chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 25px 20px 110px;
 }
 
-.linha{
-    display:flex;
-    align-items:flex-start;
-    gap:12px;
-    margin-bottom:20px;
+.linha {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
-.linha.usuario{
-    justify-content:flex-end;
+.linha.usuario {
+    justify-content: flex-end;
 }
 
-.avatar{
-    width:52px;
-    height:52px;
-    border-radius:50%;
-    background:#08783d;
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:bold;
-    flex-shrink:0;
+.avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #08783d;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
 }
 
-.balao{
-    max-width:80%;
-    padding:18px;
-    border-radius:24px;
-    font-size:20px;
-    line-height:1.45;
-    word-wrap:break-word;
+.balao {
+    max-width: 80%;
+    padding: 18px;
+    border-radius: 24px;
+    font-size: 20px;
+    line-height: 1.45;
+    word-wrap: break-word;
 }
 
-.assistente .balao{
-    background:white;
-    border:1px solid #ddd;
+.assistente .balao {
+    background: white;
+    border: 1px solid #ddd;
 }
 
-.usuario .balao{
-    background:#087f43;
-    color:white;
-    border-radius:24px 24px 5px 24px;
+.usuario .balao {
+    background: #087f43;
+    color: white;
+    border-radius: 24px 24px 5px 24px;
 }
 
-.compondo{
-    opacity:.7;
-    font-style:italic;
+.compondo {
+    opacity: 0.7;
+    font-style: italic;
 }
 
-.area-envio{
-    position:fixed;
-    left:0;
-    right:0;
-    bottom:58px;
-    background:#fff;
-    border-top:1px solid #ddd;
-    padding:12px 20px;
-    display:flex;
-    gap:10px;
-    z-index:10;
+.area-envio {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 58px;
+    background: white;
+    border-top: 1px solid #ddd;
+    padding: 12px 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
 }
 
-#pergunta{
-    flex:1;
-    height:58px;
-    border:1px solid #ddd;
-    border-radius:28px;
-    padding:0 20px;
-    font-size:18px;
-    outline:none;
+#pergunta {
+    flex: 1;
+    height: 58px;
+    border: 1px solid #ddd;
+    border-radius: 28px;
+    padding: 0 20px;
+    font-size: 18px;
+    outline: none;
 }
 
-#pergunta:focus{
-    border-color:#08783d;
+#pergunta:focus {
+    border-color: #08783d;
 }
 
-#enviar{
-    width:58px;
-    height:58px;
-    border:0;
-    border-radius:50%;
-    background:#08783d;
-    color:white;
-    font-size:25px;
-    cursor:pointer;
+#enviar {
+    width: 58px;
+    height: 58px;
+    border: 0;
+    border-radius: 50%;
+    background: #08783d;
+    color: white;
+    font-size: 25px;
+    cursor: pointer;
 }
 
-#enviar:disabled{
-    opacity:.5;
+#enviar:disabled {
+    opacity: 0.5;
 }
 
-.menu{
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    height:58px;
-    background:white;
-    border-top:1px solid #ddd;
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-    z-index:20;
+.menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 58px;
+    background: white;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 20;
 }
 
-.menu div{
-    text-align:center;
-    color:#08783d;
-    font-weight:bold;
-    font-size:15px;
+.menu div {
+    text-align: center;
+    color: #08783d;
+    font-weight: bold;
+    font-size: 15px;
 }
 
-.status{
-    text-align:center;
-    color:#777;
-    font-size:13px;
-    margin:8px;
+.status {
+    text-align: center;
+    color: #777;
+    font-size: 13px;
+    margin: 8px;
 }
 
-</style></head><body><header><div class="logo">
-    DA
-</div>
+</style>
 
-<div class="titulo">
+</head>
 
-    <h1>Dr. Agrícola</h1>
 
-    <p>
-        Seu assistente de máquinas agrícolas
-    </p>
+<body>
 
-</div>
 
-</header><div id="chat" class="chat"><div class="linha assistente">
+<header>
 
-    <div class="avatar">
+    <div class="logo">
         DA
     </div>
 
-    <div class="balao">
+    <div class="titulo">
 
-        Olá, Branco Billy! 👋<br><br>
+        <h1>Dr. Agrícola</h1>
 
-        Sou o <strong>Dr. Agrícola</strong>.<br><br>
+        <p>
+            Seu assistente de máquinas agrícolas
+        </p>
 
-        Pode me perguntar sobre tratores,
-        motores, transmissões, hidráulica,
-        elétrica, sensores, solenoides
-        e diagnóstico de máquinas agrícolas.
+    </div>
+
+</header>
+
+
+<div id="chat" class="chat">
+
+    <div class="linha assistente">
+
+        <div class="avatar">
+            DA
+        </div>
+
+        <div class="balao">
+
+            Olá, Branco Billy! 👋
+
+            <br><br>
+
+            Sou o <strong>Dr. Agrícola</strong>.
+
+            <br><br>
+
+            Pode me perguntar sobre tratores,
+            motores, transmissões, hidráulica,
+            elétrica, sensores, solenoides
+            e diagnóstico de máquinas agrícolas.
+
+        </div>
 
     </div>
 
 </div>
 
-</div><div class="status" id="status">
+
+<div
+    class="status"
+    id="status"
+>
     Dr. Agrícola conectado
-</div><div class="area-envio"><input
-    id="pergunta"
-    type="text"
-    placeholder="Digite sua pergunta..."
-    autocomplete="off"
->
-
-<button
-    id="enviar"
-    type="button"
->
-    ➤
-</button>
-
-</div><div class="menu"><div>
-    🏠<br>
-    Início
 </div>
 
-<div>
-    🤖<br>
-    Chat
+
+<div class="area-envio">
+
+    <input
+        id="pergunta"
+        type="text"
+        placeholder="Digite sua pergunta..."
+        autocomplete="off"
+    >
+
+    <button
+        id="enviar"
+        type="button"
+    >
+        ➤
+    </button>
+
 </div>
 
-<div>
-    👤<br>
-    Perfil
+
+<div class="menu">
+
+    <div>
+        🏠<br>
+        Início
+    </div>
+
+    <div>
+        🤖<br>
+        Chat
+    </div>
+
+    <div>
+        👤<br>
+        Perfil
+    </div>
+
 </div>
 
-</div><script>
+
+<script>
+
 
 const SERVIDOR =
     "https://dr-agr-cola-1.onrender.com";
@@ -269,7 +318,7 @@ const status =
     document.getElementById("status");
 
 
-function adicionarUsuario(texto){
+function adicionarUsuario(texto) {
 
     const linha =
         document.createElement("div");
@@ -304,7 +353,7 @@ function adicionarUsuario(texto){
 }
 
 
-function adicionarAssistente(texto){
+function adicionarAssistente(texto) {
 
     const linha =
         document.createElement("div");
@@ -355,7 +404,7 @@ function adicionarAssistente(texto){
 }
 
 
-function adicionarCarregando(){
+function adicionarCarregando() {
 
     const linha =
         document.createElement("div");
@@ -409,15 +458,16 @@ function adicionarCarregando(){
 }
 
 
-async function enviarPergunta(){
+async function enviarPergunta() {
 
     const pergunta =
         campo.value.trim();
 
 
-    if(!pergunta){
+    if (!pergunta) {
 
         return;
+
     }
 
 
@@ -442,7 +492,7 @@ async function enviarPergunta(){
         adicionarCarregando();
 
 
-    try{
+    try {
 
         const resposta =
             await fetch(
@@ -450,34 +500,25 @@ async function enviarPergunta(){
                 SERVIDOR + "/chat",
 
                 {
+                    method: "POST",
 
-                    method:
-                        "POST",
-
-
-                    headers:{
-
+                    headers: {
                         "Content-Type":
                             "application/json"
-
                     },
 
-
                     body:
-
                         JSON.stringify({
 
                             pergunta:
                                 pergunta
 
                         })
-
                 }
-
             );
 
 
-        if(!resposta.ok){
+        if (!resposta.ok) {
 
             throw new Error(
                 "Erro HTTP: " +
@@ -494,7 +535,7 @@ async function enviarPergunta(){
         carregando.remove();
 
 
-        if(dados.resposta){
+        if (dados.resposta) {
 
             adicionarAssistente(
                 dados.resposta
@@ -504,31 +545,27 @@ async function enviarPergunta(){
             status.textContent =
                 "Dr. Agrícola conectado";
 
-        }else{
+
+        } else {
 
             adicionarAssistente(
-
-                "O servidor respondeu, " +
-                "mas não enviou uma resposta."
-
+                "O servidor respondeu, mas não enviou uma resposta."
             );
 
 
             status.textContent =
                 "Resposta inválida";
+
         }
 
 
-    }catch(erro){
+    } catch (erro) {
 
         carregando.remove();
 
 
         adicionarAssistente(
-
-            "Não consegui conectar ao servidor. " +
-            "Verifique sua internet e tente novamente."
-
+            "Não consegui conectar ao servidor. Verifique sua internet e tente novamente."
         );
 
 
@@ -542,7 +579,7 @@ async function enviarPergunta(){
         );
 
 
-    }finally{
+    } finally {
 
         botao.disabled =
             false;
@@ -563,9 +600,9 @@ botao.addEventListener(
 
 campo.addEventListener(
     "keydown",
-    function(event){
+    function(event) {
 
-        if(event.key === "Enter"){
+        if (event.key === "Enter") {
 
             event.preventDefault();
 
@@ -576,5 +613,10 @@ campo.addEventListener(
     }
 );
 
-</script></body>
+
+</script>
+
+
+</body>
+
     </html>
