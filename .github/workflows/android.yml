@@ -14,18 +14,36 @@ jobs:
 
       - name: Preparar projeto Android
         run: |
-          rm -rf projeto
-          mkdir projeto
+          set -e
 
+          rm -rf projeto
+          mkdir -p projeto
+
+          echo "Descompactando projeto Android..."
           unzip -q Dr_Agricola_V6_Android.zip -d projeto
 
-          echo "Conteúdo do ZIP:"
-          find projeto -maxdepth 6 -type f | sort
+          echo ""
+          echo "Arquivos encontrados:"
+          find projeto -maxdepth 8 -type f | sort
 
-          ROOT=$(dirname "$(find projeto -type f \( -name 'settings.gradle' -o -name 'Settings' \) | head -n 1)")
+          echo ""
+          echo "Procurando gradlew..."
 
-          echo "Pasta do projeto encontrada:"
+          GRADLEW=$(find projeto -type f -name "gradlew" | head -n 1)
+
+          if [ -z "$GRADLEW" ]; then
+            echo "ERRO: gradlew não foi encontrado dentro do ZIP."
+            exit 1
+          fi
+
+          ROOT=$(dirname "$GRADLEW")
+
+          echo ""
+          echo "Projeto Android encontrado em:"
           echo "$ROOT"
+
+          echo ""
+          echo "Corrigindo nomes de pastas..."
 
           if [ -d "$ROOT/App" ]; then
             mv "$ROOT/App" "$ROOT/app"
@@ -52,7 +70,8 @@ jobs:
           fi
 
           if [ -d "$ROOT/app/src/main/java/com/dragricola/App" ]; then
-            mv "$ROOT/app/src/main/java/com/dragricola/App" "$ROOT/app/src/main/java/com/dragricola/app"
+            mv "$ROOT/app/src/main/java/com/dragricola/App" \
+               "$ROOT/app/src/main/java/com/dragricola/app"
           fi
 
           echo "android.useAndroidX=true" > "$ROOT/gradle.properties"
@@ -60,14 +79,21 @@ jobs:
 
           mkdir -p "$ROOT/app/src/main/assets"
 
+          echo ""
           echo "Copiando index.html correto para o APK..."
+
           cp index.html "$ROOT/app/src/main/assets/index.html"
 
+          echo ""
           echo "Verificando index.html usado no APK:"
           wc -l "$ROOT/app/src/main/assets/index.html"
 
-          echo "Primeiras linhas:"
+          echo ""
+          echo "Primeiras linhas do index.html:"
           head -n 10 "$ROOT/app/src/main/assets/index.html"
+
+          echo ""
+          echo "ROOT=$ROOT" >> "$GITHUB_ENV"
 
       - name: Configurar Java
         uses: actions/setup-java@v4
@@ -81,13 +107,28 @@ jobs:
           gradle-version: '8.7'
 
       - name: Gerar APK
-        working-directory: ${{ github.workspace }}/projeto
         run: |
-          chmod +x gradlew
+          set -e
+
+          echo "Pasta do projeto:"
+          echo "$ROOT"
+
+          echo ""
+          echo "Conteúdo:"
+          ls -la "$ROOT"
+
+          echo ""
+          echo "Verificando Gradle Wrapper:"
+          ls -la "$ROOT/gradlew"
+
+          chmod +x "$ROOT/gradlew"
+
+          cd "$ROOT"
+
           ./gradlew assembleDebug
 
       - name: Enviar APK
         uses: actions/upload-artifact@v4
         with:
           name: Dr-Agricola-APK
-          path: projeto/app/build/outputs/apk/debug/app-debug.apk
+          path: ${{ env.ROOT }}/app/build/outputs/apk/debug/app-debug.apk
