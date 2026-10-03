@@ -130,8 +130,8 @@ preferencialmente em passos numerados.
 
 
     res.json({
-      answer: resposta.output_text
-    });
+    resposta: resposta.output_text
+});
 
 
   } catch (erro) {
