@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>Dr. Agrícola</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -14,36 +21,80 @@
             margin: 0;
             font-family: Arial, sans-serif;
             background: #f3f5f7;
+            color: #222;
         }
 
         header {
-            background: #1b5e20;
+            background: #08783d;
             color: white;
             padding: 18px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        header h1 {
+        .logo {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #08783d;
+            font-size: 25px;
+            font-weight: bold;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .titulo h1 {
             margin: 0;
             font-size: 28px;
         }
 
-        header p {
-            margin: 6px 0 0;
-            font-size: 14px;
+        .titulo p {
+            margin: 5px 0 0;
+            font-size: 15px;
         }
 
         .chat {
-            padding: 15px;
-            padding-bottom: 90px;
+            padding: 20px;
+            padding-bottom: 100px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .linha-assistente {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .avatar-assistente {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 2px solid #08783d;
+            background: white;
         }
 
         .mensagem {
             max-width: 85%;
-            padding: 12px 15px;
-            margin: 10px 0;
-            border-radius: 15px;
-            line-height: 1.4;
+            padding: 15px 17px;
+            border-radius: 18px;
+            line-height: 1.5;
+            font-size: 17px;
+            word-wrap: break-word;
         }
 
         .assistente {
@@ -53,9 +104,10 @@
         }
 
         .usuario {
-            background: #1b5e20;
+            background: #08783d;
             color: white;
-            margin-left: auto;
+            margin: 15px 0 15px auto;
+            border-radius: 18px 18px 4px 18px;
         }
 
         .entrada {
@@ -64,54 +116,139 @@
             left: 0;
             right: 0;
             display: flex;
-            padding: 10px;
+            padding: 12px;
             background: white;
             border-top: 1px solid #ddd;
+            z-index: 10;
         }
 
         #pergunta {
             flex: 1;
-            padding: 13px;
+            padding: 14px 18px;
             border: 1px solid #ccc;
-            border-radius: 25px;
+            border-radius: 28px;
             outline: none;
-            font-size: 16px;
+            font-size: 17px;
+        }
+
+        #pergunta:focus {
+            border-color: #08783d;
         }
 
         button {
             margin-left: 8px;
-            width: 50px;
+            width: 55px;
+            height: 55px;
             border: none;
             border-radius: 50%;
-            background: #1b5e20;
+            background: #08783d;
             color: white;
-            font-size: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        button:active {
+            transform: scale(0.95);
         }
 
         .carregando {
-            opacity: 0.6;
+            opacity: 0.65;
+            font-style: italic;
         }
+
+        .erro {
+            color: #a00000;
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
+
 <header>
-    <h1>🚜 Dr. Agrícola</h1>
-    <p>Seu assistente para máquinas agrícolas</p>
+
+    <div class="logo">
+
+        <img
+            src="file_00000000f050820ea375a28d1e64d384.png"
+            alt="Dr. Agrícola"
+        >
+
+    </div>
+
+    <div class="titulo">
+
+        <h1>Dr. Agrícola</h1>
+
+        <p>
+            Seu assistente de máquinas agrícolas
+        </p>
+
+    </div>
+
 </header>
 
+
 <div id="chat" class="chat">
-    <div class="mensagem assistente">
-        Olá! Eu sou o <strong>Dr. Agrícola</strong>. 👨‍🔧🚜<br><br>
-        Posso ajudar você a diagnosticar problemas em tratores,
-        máquinas agrícolas, motores, transmissões, hidráulica e elétrica.
-        <br><br>
-        Qual é o problema da máquina?
+
+
+    <!-- PRIMEIRA MENSAGEM DO ASSISTENTE -->
+
+    <div class="linha-assistente">
+
+        <img
+            class="avatar-assistente"
+            src="file_00000000f050820ea375a28d1e64d384.png"
+            alt="Branco Billy"
+        >
+
+        <div class="mensagem assistente">
+
+            <strong>Olá, Branco Billy! 👋</strong>
+
+            <br><br>
+
+            Eu sou o <strong>Dr. Agrícola</strong>.
+
+            <br><br>
+
+            Posso ajudar você com:
+
+            <br><br>
+
+            🚜 Tratores
+            <br>
+            🔧 Motores
+            <br>
+            ⚙️ Transmissões
+            <br>
+            💧 Hidráulica
+            <br>
+            ⚡ Elétrica
+            <br>
+            🔌 Sensores e solenoides
+            <br>
+            🛠️ Diagnóstico de máquinas agrícolas
+
+            <br><br>
+
+            <strong>
+                Qual é o problema da máquina?
+            </strong>
+
+        </div>
+
     </div>
+
+
 </div>
 
+
 <div class="entrada">
+
     <input
         id="pergunta"
         type="text"
@@ -119,88 +256,377 @@
         autocomplete="off"
     >
 
-    <button onclick="enviar()">➤</button>
+    <button
+        id="botaoEnviar"
+        onclick="enviar()"
+    >
+        ➤
+    </button>
+
 </div>
+
 
 <script>
 
-const chat = document.getElementById("chat");
-const pergunta = document.getElementById("pergunta");
 
-function adicionarMensagem(texto, classe) {
-    const div = document.createElement("div");
-    div.className = "mensagem " + classe;
-    div.innerHTML = texto;
+const chat =
+    document.getElementById("chat");
+
+
+const pergunta =
+    document.getElementById("pergunta");
+
+
+const botaoEnviar =
+    document.getElementById("botaoEnviar");
+
+
+/*
+==================================================
+ADICIONAR MENSAGEM DO USUÁRIO
+==================================================
+*/
+
+function adicionarUsuario(texto) {
+
+    const div =
+        document.createElement("div");
+
+    div.className =
+        "mensagem usuario";
+
+    div.textContent =
+        texto;
+
     chat.appendChild(div);
 
-    window.scrollTo(0, document.body.scrollHeight);
+    rolarParaBaixo();
 }
+
+
+/*
+==================================================
+ADICIONAR MENSAGEM DO ASSISTENTE
+==================================================
+*/
+
+function adicionarAssistente(texto) {
+
+    const linha =
+        document.createElement("div");
+
+    linha.className =
+        "linha-assistente";
+
+
+    const imagem =
+        document.createElement("img");
+
+    imagem.className =
+        "avatar-assistente";
+
+    imagem.src =
+        "file_00000000f050820ea375a28d1e64d384.png";
+
+    imagem.alt =
+        "Dr. Agrícola";
+
+
+    const mensagem =
+        document.createElement("div");
+
+    mensagem.className =
+        "mensagem assistente";
+
+
+    /*
+    Mostra a resposta como texto seguro.
+    */
+
+    mensagem.textContent =
+        texto;
+
+
+    linha.appendChild(imagem);
+
+    linha.appendChild(mensagem);
+
+    chat.appendChild(linha);
+
+    rolarParaBaixo();
+}
+
+
+/*
+==================================================
+ROLAR CHAT PARA BAIXO
+==================================================
+*/
+
+function rolarParaBaixo() {
+
+    setTimeout(function() {
+
+        window.scrollTo(
+            0,
+            document.body.scrollHeight
+        );
+
+    }, 100);
+
+}
+
+
+/*
+==================================================
+ENVIAR PERGUNTA PARA O SERVIDOR
+==================================================
+*/
 
 async function enviar() {
 
-    const texto = pergunta.value.trim();
 
-    if (!texto) return;
+    const texto =
+        pergunta.value.trim();
 
-    adicionarMensagem(texto, "usuario");
+
+    if (!texto) {
+
+        return;
+
+    }
+
+
+    /*
+    Mostra pergunta do usuário
+    */
+
+    adicionarUsuario(texto);
+
+
+    /*
+    Limpa campo
+    */
 
     pergunta.value = "";
 
-    const carregando = document.createElement("div");
-    carregando.className = "mensagem assistente carregando";
-    carregando.innerText = "Dr. Agrícola está analisando...";
-    chat.appendChild(carregando);
+
+    /*
+    Desativa botão enquanto consulta
+    */
+
+    botaoEnviar.disabled = true;
+
+    botaoEnviar.style.opacity = "0.5";
+
+
+    /*
+    Mensagem temporária
+    */
+
+    const linhaCarregando =
+        document.createElement("div");
+
+    linhaCarregando.className =
+        "linha-assistente";
+
+
+    const imagemCarregando =
+        document.createElement("img");
+
+    imagemCarregando.className =
+        "avatar-assistente";
+
+    imagemCarregando.src =
+        "file_00000000f050820ea375a28d1e64d384.png";
+
+
+    const carregando =
+        document.createElement("div");
+
+    carregando.className =
+        "mensagem assistente carregando";
+
+    carregando.textContent =
+        "Dr. Agrícola está analisando sua pergunta...";
+
+
+    linhaCarregando.appendChild(
+        imagemCarregando
+    );
+
+    linhaCarregando.appendChild(
+        carregando
+    );
+
+    chat.appendChild(
+        linhaCarregando
+    );
+
+
+    rolarParaBaixo();
+
 
     try {
 
-        const resposta = await fetch(
-            "https://dr-agr-cola-1.onrender.com/chat",
-            {
-                method: "POST",
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+        /*
+        ==========================================
+        CONEXÃO COM O SERVIDOR
+        ==========================================
+        */
 
-                body: JSON.stringify({
-                    mensagem: texto
-                })
-            }
-        );
+        const resposta =
+            await fetch(
 
-        const dados = await resposta.json();
+                "https://dr-agr-cola-1.onrender.com/chat",
 
-        carregando.remove();
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        mensagem: texto
+
+                    })
+
+                }
+
+            );
+
+
+        /*
+        ==========================================
+        CONVERTE RESPOSTA
+        ==========================================
+        */
+
+        const dados =
+            await resposta.json();
+
+
+        /*
+        Remove "analisando..."
+        */
+
+        linhaCarregando.remove();
+
+
+        /*
+        ==========================================
+        VERIFICA ERRO DO SERVIDOR
+        ==========================================
+        */
+
+        if (!resposta.ok) {
+
+            const erroServidor =
+                dados.details ||
+                dados.error ||
+                "Erro desconhecido no servidor.";
+
+            adicionarAssistente(
+                "O servidor retornou um erro: " +
+                erroServidor
+            );
+
+            return;
+        }
+
+
+        /*
+        ==========================================
+        RESPOSTA DA IA
+        ==========================================
+        */
 
         if (dados.resposta) {
-            adicionarMensagem(dados.resposta, "assistente");
-        } else {
-            adicionarMensagem(
-                "Não consegui obter uma resposta do servidor.",
-                "assistente"
+
+            adicionarAssistente(
+                dados.resposta
             );
+
+        } else {
+
+            adicionarAssistente(
+                "O servidor respondeu, mas não enviou o texto da resposta."
+            );
+
         }
+
 
     } catch (erro) {
 
-        carregando.remove();
 
-        adicionarMensagem(
-            "Não consegui conectar ao servidor. Verifique sua internet e tente novamente.",
-            "assistente"
+        /*
+        Remove carregando
+        */
+
+        linhaCarregando.remove();
+
+
+        console.error(
+            "ERRO DE CONEXÃO:",
+            erro
         );
 
-        console.error(erro);
+
+        /*
+        Mensagem para o usuário
+        */
+
+        adicionarAssistente(
+
+            "Não consegui conectar ao servidor. " +
+            "Verifique sua internet e tente novamente."
+
+        );
+
     }
+
+
+    /*
+    Reativa botão
+    */
+
+    botaoEnviar.disabled = false;
+
+    botaoEnviar.style.opacity = "1";
+
 }
 
-pergunta.addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        enviar();
+
+/*
+==================================================
+ENTER PARA ENVIAR
+==================================================
+*/
+
+pergunta.addEventListener(
+    "keypress",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            enviar();
+
+        }
+
     }
-});
+);
+
 
 </script>
 
+
 </body>
+
 </html>
