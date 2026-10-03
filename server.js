@@ -45,7 +45,10 @@ app.post("/chat", async (req, res) => {
 
   try {
 
-    const mensagem = req.body?.message;
+    const mensagem =
+    req.body?.pergunta ||
+    req.body?.message ||
+    req.body?.mensagem;
 
     if (!mensagem || typeof mensagem !== "string") {
 
