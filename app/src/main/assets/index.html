@@ -46,9 +46,24 @@ const img='assistente_branco_billy.png';
 function p(){try{return JSON.parse(localStorage.getItem('dr_profile')||'{}')}catch(e){return{}}}
 function home(){document.getElementById('home').style.display='block';document.getElementById('chat').style.display='none';document.getElementById('composer').style.display='none'}
 function openChat(){document.getElementById('home').style.display='none';document.getElementById('chat').style.display='block';document.getElementById('composer').style.display='flex';if(!document.getElementById('messages').children.length)welcome()}
-function welcome(){let x=p(),name=x.name||'';addBot((name?'Olá, '+name+'! 👋 ':'Olá! 👋 ')+'Sou o <b>Dr. Agrícola</b>. O aplicativo está preparado para receber a conexão com a IA e a pesquisa na internet.')}
-function addBot(t){document.getElementById('messages').innerHTML+=`<div class="msg"><img src="${img}"><div class="bubble bot">${t}</div></div>`}
-function send(){let i=document.getElementById('input'),t=i.value.trim();if(!t)return;i.value='';document.getElementById('messages').innerHTML+=`<div class="msg"><div class="bubble me">${t}</div></div>`;addBot('Recebi sua pergunta. A próxima camada do projeto conecta este aplicativo ao servidor seguro do Dr. Agrícola, que fará a pesquisa e retornará a resposta com as fontes.')}
+const SERVER='https://dr-agr-cola-1.onrender.com';
+const history=[];let sending=false;
+function welcome(){let x=p();addBot((x.name?'Olá, '+x.name+'! ':'Olá! ')+'Sou o Dr. Agrícola. Me diga a marca, o modelo e o problema da sua máquina.');}
+function message(text,user=false){const row=document.createElement('div');row.className='msg';if(!user){const avatar=document.createElement('img');avatar.src=img;row.appendChild(avatar);}const bubble=document.createElement('div');bubble.className='bubble '+(user?'me':'bot');bubble.style.whiteSpace='pre-wrap';bubble.textContent=text;row.appendChild(bubble);document.getElementById('messages').appendChild(row);row.scrollIntoView({block:'end',behavior:'smooth'});return row;}
+function addBot(t){return message(t);}
+async function send(){
+ const i=document.getElementById('input'),text=i.value.trim();if(!text||sending)return;
+ if(text.length>6000){addBot('Envie uma mensagem com até 6.000 caracteres.');return;}
+ sending=true;i.value='';message(text,true);const button=document.querySelector('#composer button');button.disabled=true;
+ const pending=addBot('Consultando o Dr. Agrícola...');const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),120000);
+ try{
+  const response=await fetch(SERVER+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,history:history.slice(-12)}),signal:controller.signal});
+  const data=await response.json();if(!response.ok)throw new Error(data.error||'O servidor não conseguiu responder.');
+  const answer=data.resposta||data.answer;if(typeof answer!=='string'||!answer.trim())throw new Error('O servidor retornou uma resposta vazia.');
+  pending.remove();addBot(answer);history.push({role:'user',content:text},{role:'assistant',content:answer});
+ }catch(error){pending.remove();addBot(error.name==='AbortError'?'O servidor demorou para responder. Tente novamente.':error.message==='Failed to fetch'?'Não consegui conectar ao servidor. Confira sua internet e tente novamente.':error.message);i.value=text;}
+ finally{clearTimeout(timer);sending=false;button.disabled=false;i.focus();}
+}
 function profile(){let x=p(),name=prompt('Seu nome:',x.name||'');if(name!==null){x.name=name;localStorage.setItem('dr_profile',JSON.stringify(x));document.getElementById('profileText').textContent=name?'Olá, '+name+'! Seu perfil está salvo neste aparelho.':'Perfil ainda não preenchido.'}}
 </script>
 </body>
