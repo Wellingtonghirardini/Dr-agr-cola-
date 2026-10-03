@@ -1,6 +1,8 @@
-# Dr. Agrícola — versão 7
+# Dr. Agrícola — versão 7.1
 
 Aplicativo Android em português para assistência e registros de manutenção agrícola.
+
+A versão 7.1 usa a imagem do assistente como ícone do Android. Os recursos de ícone e o manifesto atualizado estão no projeto completo do ZIP.
 
 ## Recursos
 
@@ -20,7 +22,7 @@ Os dados ficam neste aparelho. Não há sincronização automática nem comunida
 
 No GitHub, abra Actions → Gerar APK Dr. Agrícola → Run workflow. Após a conclusão, baixe o artefato `Dr-Agricola-APK`, extraia o ZIP e instale `app-debug.apk`.
 
-O workflow utiliza o projeto completo de `Dr_Agricola_V6_Android.zip` (nome legado; conteúdo versão 7) e substitui seu HTML pelo `index.html` da raiz. Ao alterar código nativo, manifesto ou recursos, atualize também o ZIP. A pasta `app` contém cópias para consulta.
+O workflow utiliza o projeto completo de `Dr_Agricola_V6_Android.zip` (nome legado; conteúdo versão 7.1) e substitui seu HTML pelo `index.html` da raiz. Ao alterar código nativo, manifesto ou recursos, atualize também o ZIP. A pasta `app` contém cópias para consulta.
 
 ## Servidor
 
