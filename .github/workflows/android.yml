@@ -19,29 +19,18 @@ jobs:
           rm -rf projeto
           mkdir -p projeto
 
-          echo "Descompactando projeto Android..."
+          echo "Descompactando projeto..."
           unzip -q Dr_Agricola_V6_Android.zip -d projeto
 
-          echo ""
-          echo "Conteúdo do ZIP:"
-          find projeto -maxdepth 8 -type f | sort
+          echo "Conteúdo do projeto:"
+          find projeto -maxdepth 7 -type f | sort
 
-          echo ""
-          echo "Procurando settings.gradle..."
+          ROOT="projeto"
 
-          SETTINGS=$(find projeto -type f -name "settings.gradle" | head -n 1)
-
-          if [ -z "$SETTINGS" ]; then
-            echo "ERRO: settings.gradle não foi encontrado."
-            exit 1
-          fi
-
-          ROOT=$(dirname "$SETTINGS")
-
-          echo ""
-          echo "Pasta do projeto encontrada:"
+          echo "Projeto Android:"
           echo "$ROOT"
 
+          # Corrigir nomes de arquivos/pastas
           if [ -d "$ROOT/App" ]; then
             mv "$ROOT/App" "$ROOT/app"
           fi
@@ -67,31 +56,58 @@ jobs:
           fi
 
           if [ -d "$ROOT/app/src/main/java/com/dragricola/App" ]; then
-            mv "$ROOT/app/src/main/java/com/dragricola/App" \
-               "$ROOT/app/src/main/java/com/dragricola/app"
+            mv "$ROOT/app/src/main/java/com/dragricola/App" "$ROOT/app/src/main/java/com/dragricola/app"
           fi
 
+          # AndroidX
           echo "android.useAndroidX=true" > "$ROOT/gradle.properties"
           echo "android.enableJetifier=true" >> "$ROOT/gradle.properties"
 
+          # Garantir pastas necessárias
           mkdir -p "$ROOT/app/src/main/assets"
+          mkdir -p "$ROOT/app/src/main/res/values"
 
-          echo ""
-          echo "Copiando index.html correto para o APK..."
-
+          # Copiar o HTML atualizado
+          echo "Copiando index.html atualizado..."
           cp index.html "$ROOT/app/src/main/assets/index.html"
 
-          echo ""
-          echo "Verificando index.html usado no APK:"
+          # CORREÇÃO DO TEMA
+          echo "Corrigindo Theme.DrAgricola..."
+
+          cat > "$ROOT/app/src/main/res/values/themes.xml" <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+
+              <style name="Theme.DrAgricola" parent="Theme.AppCompat.DayNight.NoActionBar">
+                  <item name="android:fontFamily">sans</item>
+                  <item name="android:colorAccent">#08783D</item>
+                  <item name="android:statusBarColor">#08783D</item>
+                  <item name="android:navigationBarColor">#000000</item>
+                  <item name="android:windowLightStatusBar">false</item>
+              </style>
+
+          </resources>
+          EOF
+
+          echo "Tema corrigido."
+
+          echo "Verificando arquivos importantes:"
+          ls -la "$ROOT"
+          ls -la "$ROOT/app"
+          ls -la "$ROOT/app/src/main"
+          ls -la "$ROOT/app/src/main/res/values"
+
+          echo "Verificando HTML:"
           wc -l "$ROOT/app/src/main/assets/index.html"
 
-          echo ""
-          echo "Primeiras linhas:"
-          head -n 10 "$ROOT/app/src/main/assets/index.html"
+          echo "Verificando build.gradle:"
+          cat "$ROOT/build.gradle"
 
-          echo ""
-          echo "Salvando caminho do projeto..."
-          echo "ROOT=$ROOT" >> "$GITHUB_ENV"
+          echo "Verificando settings.gradle:"
+          cat "$ROOT/settings.gradle"
+
+          echo "Verificando tema:"
+          cat "$ROOT/app/src/main/res/values/themes.xml"
 
       - name: Configurar Java
         uses: actions/setup-java@v4
@@ -104,32 +120,31 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Gerar APK
+      - name: Verificar Gradle
+        working-directory: ${{ github.workspace }}/projeto
         run: |
-          set -e
+          gradle --version
 
-          echo "Pasta do projeto:"
-          echo "$ROOT"
-
-          echo ""
-          echo "Conteúdo da pasta:"
-          ls -la "$ROOT"
-
-          echo ""
-          echo "Executando Gradle..."
-
-          cd "$ROOT"
-
-          gradle assembleDebug
+      - name: Gerar APK
+        working-directory: ${{ github.workspace }}/projeto
+        run: |
+          gradle clean
+          gradle assembleDebug --stacktrace
 
       - name: Verificar APK
         run: |
           echo "Procurando APK..."
+          find projeto/app/build/outputs -type f -name "*.apk" -print
 
-          find "$ROOT/app/build/outputs" -type f -name "*.apk" -print
+          if [ ! -f "projeto/app/build/outputs/apk/debug/app-debug.apk" ]; then
+            echo "ERRO: APK não foi gerado."
+            exit 1
+          fi
+
+          echo "APK encontrado com sucesso."
 
       - name: Enviar APK
         uses: actions/upload-artifact@v4
         with:
           name: Dr-Agricola-APK
-          path: ${{ env.ROOT }}/app/build/outputs/apk/debug/app-debug.apk
+          path: projeto/app/build/outputs/apk/debug/app-debug.apk
